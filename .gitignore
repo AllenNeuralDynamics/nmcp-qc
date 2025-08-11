@@ -172,3 +172,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+.idea
+*.swc
+*.html
+
+# Taskfile.dist.yaml is used by the GitHub workflow.  Allow a local task file to push images to other hubs, etc.
+Taskfile.yaml

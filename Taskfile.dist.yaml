@@ -1,0 +1,36 @@
+version: '3'
+
+vars:
+  REPOSITORY: ghcr.io
+  IMAGE: allenneuraldynamics/nmcp-qc
+  REPOIMAGE: "{{.REPOSITORY}}/{{.IMAGE}}"
+  VERSION:
+    sh: jq -r .version version.json
+  MAJOR:
+    sh: string={{.VERSION}} && arr=(${string//"."/ }) && echo ${arr[0]}
+  MINOR:
+    sh: string={{.VERSION}} && arr=(${string//"."/ }) && echo ${arr[1]}
+  REVISION:
+    sh: string={{.VERSION}} && arr=(${string//"."/ }) && echo ${arr[2]}
+  IMAGEWITHVERSION: "{{.REPOIMAGE}}:{{.MAJOR}}"
+  IMAGEWITHMINORVERSION: "{{.IMAGEWITHVERSION}}.{{.MINOR}}"
+  IMAGEWITHREVERSION: "{{.IMAGEWITHMINORVERSION}}.{{.REVISION}}"
+  IMAGELATEST: "{{.REPOIMAGE}}:latest"
+
+tasks:
+  module:
+    cmds:
+      - uv build "aind-nmcp"
+  build:
+    cmds:
+      - docker build --platform linux/amd64 --tag {{.IMAGEWITHVERSION}} .
+      - docker tag {{.IMAGEWITHVERSION}} {{.IMAGEWITHMINORVERSION}}
+      - docker tag {{.IMAGEWITHMINORVERSION}} {{.IMAGEWITHREVERSION}}
+      - docker tag {{.IMAGEWITHREVERSION}} {{.IMAGELATEST}}
+  release:
+    cmds:
+      - task: build
+      - docker push {{.IMAGEWITHVERSION}}
+      - docker push {{.IMAGEWITHMINORVERSION}}
+      - docker push {{.IMAGEWITHREVERSION}}
+      - docker push {{.IMAGELATEST}}
