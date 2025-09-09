@@ -23,6 +23,7 @@ tasks:
       - uv build "aind-nmcp"
   build:
     cmds:
+      - task: module
       - docker build --platform linux/amd64 --tag {{.IMAGEWITHVERSION}} .
       - docker tag {{.IMAGEWITHVERSION}} {{.IMAGEWITHMINORVERSION}}
       - docker tag {{.IMAGEWITHMINORVERSION}} {{.IMAGEWITHREVERSION}}
