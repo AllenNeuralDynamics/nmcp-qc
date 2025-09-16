@@ -12,6 +12,8 @@ from .quality_control_output import StandardMorphError
 
 logger = logging.getLogger(__name__)
 
+_ERRORS_AS_WARNINGS = ("AxonOrigins", "DendriteOrigins")
+
 
 def process(reconstruction_id: str, json_contents: Any) -> QualityControlOutput:
     data = parse_json(json_contents, False)
@@ -35,11 +37,18 @@ def process(reconstruction_id: str, json_contents: Any) -> QualityControlOutput:
     sm_result = StandardMorpOutput(standard_morph_version=report["StandardMorphVersion"])
 
     for error in report["errors"]:
-        sm_result.errors.append(StandardMorphError(
-            test_name=error["test"],
-            test_description=error["description"],
-            affected_nodes=[n[0] for n in error["nodes_with_error"]])
-        )
+        if error["test"] in _ERRORS_AS_WARNINGS:
+            sm_result.warnings.append(StandardMorphError(
+                test_name=error["test"],
+                test_description=error["description"],
+                affected_nodes=[n[0] for n in error["nodes_with_error"]])
+            )
+        else:
+            sm_result.errors.append(StandardMorphError(
+                test_name=error["test"],
+                test_description=error["description"],
+                affected_nodes=[n[0] for n in error["nodes_with_error"]])
+            )
 
     qc_output = QualityControlOutput(reconstruction_id=reconstruction_id, result=sm_result, error=None)
 

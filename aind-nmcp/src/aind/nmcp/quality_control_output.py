@@ -18,6 +18,7 @@ class StandardMorpOutput(BaseModel):
            serialization_alias=to_camel)
     )
     standard_morph_version: str
+    warnings: list[StandardMorphError] = Field(default_factory=list)
     errors: list[StandardMorphError] = Field(default_factory=list)
 
 
