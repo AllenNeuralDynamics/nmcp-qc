@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from aind.nmcp.quality_control_output import QualityControlOutput
 from aind.nmcp.reconstruction_input import ReconstructionInput
-from aind.nmcp.process_qc import process
+from aind.nmcp.process_qc import process_json
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ def read_root():
 @app.post("/performqc/")
 async def create_item(item: ReconstructionInput) -> Optional[Any]:
     try:
-        return process(item.id, item.data)
+        return process_json(item.id, item.data)
     except Exception as e:
         # Log the error for debugging purposes
         logger.error(f"Error processing reconstruction {item.id}: {e}")

@@ -1,4 +1,3 @@
-import json
 import logging
 from typing import Any
 
@@ -12,24 +11,29 @@ from .quality_control_output import StandardMorphError
 
 logger = logging.getLogger(__name__)
 
-_ERRORS_AS_WARNINGS = ("AxonOrigins", "DendriteOrigins")
+_ERRORS_AS_WARNINGS = ()
 
 
-def process(reconstruction_id: str, json_contents: Any) -> QualityControlOutput:
-    data = parse_json(json_contents, False)
-
-    worker = Standardizer(path_to_swc=None, input_morphology_df=data, swc_separator=" ")
-
-    """
+def process_swc(reconstruction_id: str, file: str) -> QualityControlOutput:
     worker = Standardizer(
-        path_to_swc=None,
+        path_to_swc=file,
         swc_separator="\s+",
         soma_children_distance_threshold=50,
-        valid_filename_format="None",
         soma_mip_kwargs={}
     )
-    """
+    return _process(reconstruction_id, worker)
 
+
+def process_json(reconstruction_id: str, json_contents: Any) -> QualityControlOutput:
+    data = parse_json(json_contents, False)
+
+    worker = Standardizer(path_to_swc=None, input_morphology_df=data, swc_separator=" ",
+                          soma_children_distance_threshold=50)
+
+    return _process(reconstruction_id, worker)
+
+
+def _process(reconstruction_id: str, worker: Standardizer) -> QualityControlOutput:
     worker.validate()
 
     report = worker.StandardizationReport
@@ -55,12 +59,3 @@ def process(reconstruction_id: str, json_contents: Any) -> QualityControlOutput:
     logger.info(f"Processed reconstruction {reconstruction_id} with {len(sm_result.errors)} errors found.")
 
     return qc_output
-
-
-if __name__ == '__main__':
-    with open("../../../tests/test_data/small_reconstruction.json", "r") as f:
-        contents = f.read()
-
-    output = process("609281", json.loads(contents))
-
-    print(output)
