@@ -11,7 +11,7 @@ from .quality_control_output import StandardMorphError
 
 logger = logging.getLogger(__name__)
 
-_ERRORS_AS_WARNINGS = ()
+_ERRORS_AS_WARNINGS = ("SomaChildrenFurcation",)
 
 
 def process_swc(reconstruction_id: str, file: str) -> QualityControlOutput:

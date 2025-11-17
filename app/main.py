@@ -7,6 +7,9 @@ from aind.nmcp.quality_control_output import QualityControlOutput
 from aind.nmcp.reconstruction_input import ReconstructionInput
 from aind.nmcp.process_qc import process_json
 
+uvicorn_access = logging.getLogger("uvicorn.access")
+uvicorn_access.disabled = True
+
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
