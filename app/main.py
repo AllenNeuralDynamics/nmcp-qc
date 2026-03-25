@@ -27,4 +27,6 @@ async def create_item(item: ReconstructionInput) -> Optional[Any]:
     except Exception as e:
         # Log the error for debugging purposes
         logger.error(f"Error processing reconstruction {item.id}: {e}")
-        return QualityControlOutput(reconstruction_id=item.id, result=None, error=str(e))
+        return QualityControlOutput(reconstruction_id=item.id, result=None, error_kind="ServiceError",
+                                    error_description=f"Error processing reconstruction {item.id}",
+                                    error_info=str(e))

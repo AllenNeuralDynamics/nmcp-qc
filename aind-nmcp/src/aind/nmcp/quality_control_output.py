@@ -21,7 +21,6 @@ class StandardMorpOutput(BaseModel):
     warnings: list[StandardMorphError] = Field(default_factory=list)
     errors: list[StandardMorphError] = Field(default_factory=list)
 
-
 class QualityControlOutput(BaseModel):
     model_config = ConfigDict(
        alias_generator=AliasGenerator(
@@ -29,4 +28,6 @@ class QualityControlOutput(BaseModel):
     )
     reconstruction_id: str
     result: StandardMorpOutput | None = None
-    error: str | None = None
+    error_kind: str | None = None
+    error_description: str | None = None
+    error_info: str | None = None

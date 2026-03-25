@@ -6,8 +6,8 @@ from aind.nmcp.process_qc import process_json, process_swc
 if __name__ == '__main__':
     current_directory = os.path.dirname(os.path.abspath(__file__))
 
-    #  input_file = os.path.join(current_directory, "../aind-nmcp/tests/test_data/small_reconstruction.json")
-    input_file = r"D:\aind\nmcp\nmcp-api\output.json"
+    input_file = os.path.join(current_directory, "../aind-nmcp/tests/test_data/small_reconstruction.json")
+    # input_file = r"C:\Work\aind\nmcp\data\2025-12-test-instance\653980\N003-653980-PG.json"
 
     if input_file.endswith(".swc"):
         output = process_swc("609281", input_file)

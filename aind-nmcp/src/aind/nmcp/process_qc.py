@@ -25,7 +25,16 @@ def process_swc(reconstruction_id: str, file: str) -> QualityControlOutput:
 
 
 def process_json(reconstruction_id: str, json_contents: Any) -> QualityControlOutput:
-    data = parse_json(json_contents, False)
+    try:
+        data = parse_json(json_contents, False)
+    except KeyError as key_error:
+        return QualityControlOutput(reconstruction_id=reconstruction_id, result=None, error_kind="KeyError",
+                                    error_description="The reconstruction may reference parent nodes that are not present in the file.",
+                                    error_info=str(key_error))
+    except Exception as error:
+        return QualityControlOutput(reconstruction_id=reconstruction_id, result=None, error_kind="ParseError",
+                                    error_description="An unexpected error occurred parsing the reconstruction data.",
+                                    error_info=str(error))
 
     worker = Standardizer(path_to_swc=None, input_morphology_df=data, swc_separator=" ",
                           soma_children_distance_threshold=50)
@@ -54,7 +63,7 @@ def _process(reconstruction_id: str, worker: Standardizer) -> QualityControlOutp
                 affected_nodes=[n[0] for n in error["nodes_with_error"]])
             )
 
-    qc_output = QualityControlOutput(reconstruction_id=reconstruction_id, result=sm_result, error=None)
+    qc_output = QualityControlOutput(reconstruction_id=reconstruction_id, result=sm_result)
 
     logger.info(f"Processed reconstruction {reconstruction_id} with {len(sm_result.errors)} errors found.")
 
