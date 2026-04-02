@@ -1,6 +1,6 @@
 [project]
 name = "nmcpqc"
-version = "3.0.1"
+version = "3.0.2"
 description = "NMCP Quality Control Service"
 readme = "README.md"
 requires-python = ">=3.10"
