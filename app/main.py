@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from aind.nmcp.quality_control_output import QualityControlOutput
 from aind.nmcp.reconstruction_input import ReconstructionInput
-from aind.nmcp.process_qc import process_json
+from aind.nmcp.process_qc import process_node_data
 
 uvicorn_access = logging.getLogger("uvicorn.access")
 uvicorn_access.disabled = True
@@ -21,9 +21,9 @@ def read_root():
 
 
 @app.post("/performqc/")
-async def create_item(item: ReconstructionInput) -> Optional[Any]:
+async def create_item(item: ReconstructionInput) -> QualityControlOutput:
     try:
-        return process_json(item.id, item.data)
+        return process_node_data(item.id, item.data)
     except Exception as e:
         # Log the error for debugging purposes
         logger.error(f"Error processing reconstruction {item.id}: {e}")

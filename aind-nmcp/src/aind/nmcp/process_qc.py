@@ -1,5 +1,7 @@
 import logging
-from typing import Any
+from typing import Any, List
+
+import pandas as pd
 
 from aind_neuron_reconstruction_io.io import parse_json
 
@@ -8,21 +10,55 @@ from standard_morph.Standardizer import Standardizer
 from .quality_control_output import QualityControlOutput, StandardMorpOutput
 
 from .quality_control_output import StandardMorphTest
+from .reconstruction_input import NodeData
 
 logger = logging.getLogger(__name__)
 
 _TESTS_AS_ERROR = ("DendriteOrigins", "CheckForLoops", "OrphanedNodes", "AxonOrigins", "NumberOfSomas")
 
 
-def process_swc(reconstruction_id: str, file: str) -> QualityControlOutput:
+def process_swc_file(reconstruction_id: str, file: str) -> QualityControlOutput:
     worker = Standardizer(
         path_to_swc=file,
-        swc_separator="\s+",
+        swc_separator=" ",
         soma_children_distance_threshold=50,
-        soma_mip_kwargs={}
+        soma_mip_kwargs={},
+        write_all_tests_to_report=True
     )
+
     return _process(reconstruction_id, worker)
 
+def process_node_data(reconstruction_id: str, node_data: List[NodeData]) -> QualityControlOutput:
+    try:
+        col_list = [
+            "node_id",
+            "compartment",
+            "x",
+            "y",
+            "z",
+            "r",
+            "parent",
+        ]
+
+        node_list = [list(n.model_dump().values()) for n in node_data]
+
+        data = pd.DataFrame(node_list, columns=col_list)
+
+        worker = Standardizer(
+            path_to_swc=None,
+            input_morphology_df=data,
+            swc_separator=" ",
+            soma_children_distance_threshold=50,
+            soma_mip_kwargs={},
+            write_all_tests_to_report=True
+        )
+
+        return _process(reconstruction_id, worker)
+
+    except Exception as error:
+        return QualityControlOutput(reconstruction_id=reconstruction_id, result=None, error_kind="ParseError",
+                                    error_description="An unexpected error occurred parsing the reconstruction data.",
+                                    error_info=str(error))
 
 def process_json(reconstruction_id: str, json_contents: Any) -> QualityControlOutput:
     try:

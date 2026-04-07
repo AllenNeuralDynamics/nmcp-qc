@@ -22,7 +22,7 @@ class StandardMorpOutput(BaseModel):
 class QualityControlOutput(BaseModel):
     model_config = ConfigDict(alias_generator=AliasGenerator(serialization_alias=to_camel))
 
-    service_version: str = "3.0.2"
+    service_version: str = "3.0.3"
     reconstruction_id: str
     result: StandardMorpOutput | None = None
     error_kind: str | None = None
