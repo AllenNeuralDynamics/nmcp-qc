@@ -20,7 +20,7 @@ vars:
 tasks:
   module:
     cmds:
-      - uv build "aind-nmcp"
+      - uv build
   build:
     cmds:
       - task: module

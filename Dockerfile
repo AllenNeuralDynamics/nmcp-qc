@@ -1,16 +1,11 @@
 FROM python:3.10
 
-WORKDIR /wheel
-
-COPY aind-nmcp/dist/nmcpqc-3.0.3-py3-none-any.whl ./
-RUN pip install ./nmcpqc-3.0.3-py3-none-any.whl
-
 WORKDIR /app
 
-COPY app/main.py ./
+COPY dist/nmcpqc-*-py3-none-any.whl ./
+RUN pip install ./nmcpqc-*-py3-none-any.whl
 
 COPY docker-entry.sh ./
-
-COPY app/*.* .
+RUN chmod +x docker-entry.sh
 
 CMD ["./docker-entry.sh"]

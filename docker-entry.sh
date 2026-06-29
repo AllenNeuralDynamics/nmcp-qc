@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-logName=$(date '+%Y-%m-%d_%H-%M-%S');
+log_dir=/var/log/nmcp
+mkdir -p "${log_dir}"
 
-mkdir -p /var/log/nmcp
+log_name=$(date '+%Y-%m-%d_%H-%M-%S')
 
-export PYTHONPATH=$PWD
-
-# fastapi run main.py --port 5000 >> /var/log/nmcp/nmcp-qc-${logName}.log 2>&1
-fastapi run main.py --port 5000 >> /dev/null 2>&1
-
-# CMD ["fastapi", "run", "main.py", "--port", "5000"]
+nmcp-qc-serve 2>&1 | tee -a "${log_dir}/nmcp-qc-${log_name}.log"

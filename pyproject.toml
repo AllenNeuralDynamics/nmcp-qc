@@ -1,6 +1,6 @@
 [project]
 name = "nmcpqc"
-version = "3.0.3"
+version = "3.0.4"
 description = "NMCP Quality Control Service"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,6 +12,20 @@ dependencies = [
     "pydantic>=2.11.7",
     "standard-morph @ git+https://github.com/AllenInstitute/standard_morph",
 ]
+
+[project.scripts]
+nmcp-qc-serve = "aind.nmcp.qc.main:run"
+nmcp-qc-process = "aind.nmcp.qc.tools.process_file:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aind"]
 
 [tool.uv.sources]
 standard-morph = { git = "https://github.com/AllenInstitute/standard_morph" }
