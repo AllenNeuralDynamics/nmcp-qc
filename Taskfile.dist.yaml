@@ -5,7 +5,7 @@ vars:
   IMAGE: allenneuraldynamics/nmcp-qc
   REPOIMAGE: "{{.REPOSITORY}}/{{.IMAGE}}"
   VERSION:
-    sh: jq -r .version version.json
+    sh: uv version --short
   MAJOR:
     sh: string={{.VERSION}} && arr=(${string//"."/ }) && echo ${arr[0]}
   MINOR:
@@ -20,7 +20,9 @@ vars:
 tasks:
   module:
     cmds:
-      - uv build "aind-nmcp"
+      - uv build --clear
+      # meshparty requires the dataclasses backport, whose locked 0.8 is Python 3.6-only and which the stdlib replaces.
+      - uv export --locked --no-dev --no-emit-project --no-hashes --no-emit-package dataclasses --output-file dist/requirements.txt
   build:
     cmds:
       - task: module
